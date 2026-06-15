@@ -44,7 +44,7 @@ jobs:
             --dest-cpu=${{ matrix.arch }} \
             --dest-os=linux \
             --fully-static
-          make -j$(nproc)
+          make
           strip out/Release/node
 
       - name: Upload artifact
