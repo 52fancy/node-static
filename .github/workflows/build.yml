@@ -1,0 +1,55 @@
+name: Build Static Node.js
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: 'Node.js version (e.g. 24.0.0, leave empty for latest)'
+        required: true
+        default: 'latest'
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+
+    container:
+      image: alpine:latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          apk add --no-cache python3 g++ make linux-headers git curl musl-dev
+
+      - name: Download Node.js source (specific version)
+        run: |
+          NODE_VERSION="${{ inputs.node_version }}"
+          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
+          curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz"
+          mkdir -p node-src
+          tar -xzf "node-v${NODE_VERSION}.tar.gz" -C node-src --strip-components=1
+
+      - name: Configure and build
+        working-directory: node-src
+        run: |
+          ./configure \
+            --prefix=/usr \
+            --dest-cpu=${{ matrix.arch }} \
+            --dest-os=linux \
+            --fully-static
+          make -j$(nproc)
+          strip out/Release/node
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-v${NODE_VERSION}-${{ matrix.arch }}
+          path: node-src/out/Release/node
+          retention-days: 90
