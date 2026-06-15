@@ -1,9 +1,6 @@
 name: Build Static Node.js
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 jobs:
