@@ -28,7 +28,7 @@ jobs:
         run: |
           apk add --no-cache python3 g++ make linux-headers git curl musl-dev
 
-      - name: Download Node.js source (specific version)
+      - name: Download Node.js source
         run: |
           NODE_VERSION="${{ inputs.node_version }}"
           echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
