@@ -1,4 +1,4 @@
-name: Build Static Node.js.1
+name: Build Static Node.js
 
 on:
   workflow_dispatch:
