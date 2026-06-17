@@ -1,0 +1,43 @@
+name: Build Static Node.js
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-latest
+          ##- arch: arm64
+          ##  runner: ubuntu-24.04-arm
+
+    container:
+      image: alpine:latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          apk add alpine-sdk bash python3 krb5-dev git git-lfs npm jq quilt rsync unzip gnupg libx11-dev libxkbfile-dev libsecret-dev
+
+      - name: Download Node.js source
+        run: |
+          git clone https://github.com/coder/code-server.git
+          cd code-server
+          git submodule update --init
+          quilt push -a
+          npm install
+          npm run build
+          VERSION=0.0.1 npm run build:vscode
+          KEEP_MODULES=1 npm run release
+          npm run package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-${{ matrix.arch }}
+          path: release-packages/*
+          retention-days: 90
