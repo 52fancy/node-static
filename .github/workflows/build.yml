@@ -17,8 +17,8 @@ jobs:
         include:
           - arch: x64
             runner: ubuntu-latest
-          - arch: arm64
-            runner: ubuntu-24.04-arm
+          ##- arch: arm64
+          ##  runner: ubuntu-24.04-arm
 
     container:
       image: alpine:latest
@@ -43,7 +43,7 @@ jobs:
             --prefix=/usr \
             --dest-cpu=${{ matrix.arch }} \
             --dest-os=linux \
-            --fully-static
+            --partly-static
           make
           strip out/Release/node
 
