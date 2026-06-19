@@ -31,7 +31,6 @@ jobs:
       - name: Download Node.js source
         run: |
           NODE_VERSION="${{ inputs.node_version }}"
-          echo "NODE_VERSION=${NODE_VERSION}" >> $GITHUB_ENV
           curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}.tar.gz"
           mkdir -p node-src
           tar -xzf "node-v${NODE_VERSION}.tar.gz" -C node-src --strip-components=1
