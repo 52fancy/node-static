@@ -16,7 +16,7 @@ jobs:
           ##  runner: ubuntu-24.04-arm
 
     container:
-      image: alpine:v3.21
+      image: alpine:3.21
 
     steps:
       - name: Install dependencies
