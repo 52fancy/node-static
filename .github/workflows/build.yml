@@ -43,7 +43,7 @@ jobs:
             --dest-cpu=${{ matrix.arch }} \
             --dest-os=linux \
             --partly-static
-          make
+          make -j4
           strip out/Release/node
 
       - name: Upload artifact
